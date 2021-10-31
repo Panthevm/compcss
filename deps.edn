@@ -1,0 +1,16 @@
+{:paths ["src"]
+ :deps
+ {org.clojure/clojure   {:mvn/version "1.10.3"}
+  clj-ph-css/clj-ph-css {:mvn/version "0.1.3"}
+  io.aviso/pretty       {:mvn/version "1.1"}
+  hawk/hawk             {:mvn/version "0.2.11"}}
+
+ :aliases
+ {:test
+  {:extra-paths ["test"]
+   :extra-deps  {healthsamurai/matcho {:mvn/version "RELEASE"}}}
+  :kaocha
+  {:extra-paths ["test"]
+   :extra-deps  {lambdaisland/kaocha {:mvn/version "1.0-612"}}
+   :jvm-opts    ^:replace ["-XX:-OmitStackTraceInFastThrow"]
+   :main-opts   ["-m" "kaocha.runner" "--config-file" "test/settings.edn"]}}}
