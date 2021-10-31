@@ -1,0 +1,42 @@
+* CompCSS
+A tool for transforming CSS with Clojure.
+
+
+** Middleware
++ [[https://github.com/Panthevm/compcss-clean][compcss-clean]] - Removing unused CSS from stylesheets.(todo)
+
+
+** Usage
+Add a dependency.
+
+#+BEGIN_SRC edn
+compcss/compcss {:mvn/version "LASTEST"}
+#+END_SRC
+
+Create watcher at the start of the app.
+
+#+BEGIN_SRC clj
+(ns user)
+(require 'compcss.core)
+
+(compcss.core/create-watcher
+ {:input
+  {;; The directory of css source files
+   :css ["resources/public/css/src"] 
+   ;; The directory of source files
+   :clj ["src"]}                     
+  ;; Handler for changes to source files
+  :handler
+  (->
+   compcss.core/after-middleware  ;; stylesheets <- schema
+   compcss.core/before-middleware ;; stylesheets -> schema
+   )
+  ;; Path to the outgoing css file
+  :output
+  {:css "resources/public/css/clean.css"}})
+
+#+END_SRC
+
+Done. Now changing the source files entails assembling the outgoing css file. 
+
+[[https://github.com/Panthevm/compcss/tree/master/example][Example project]]
