@@ -34,25 +34,13 @@
    (mapcat files)
    (filter css-file?)))
 
-(defn import-stylesheets
-  "compcss.core-test/test-import-css"
-  [old-stylesheets files]
-  (reduce
-   (fn [new-stylesheet file]
-     (if (contains? new-stylesheet (str file))
-       new-stylesheet
-       (->>
-        (clj-ph-css.core/string->schema (slurp file))
-        (assoc new-stylesheet (str file)))))
-   old-stylesheets files))
-
 (def message-separator (io.aviso.ansi/green "█"))
 
 (defn import-message
   [configuration db]
   (println
    message-separator
-   "CleanCSS"
+   "CompCSS"
    message-separator
    (get-in configuration [:output :css])
    message-separator
@@ -62,7 +50,7 @@
   [configuration db]
   (println
    message-separator
-   "CleanCSS"
+   "CompCSS"
    message-separator
    (get-in configuration [:output :css])
    message-separator
@@ -74,13 +62,23 @@
       (/ (- (. System (currentTimeMillis)) (::start-time db)) 1000.0)))
    message-separator
    (when (::input-size db)
-     (format
-      "%.03f MB -> %.03f MB"
-      (-> (::input-size db)
-          (/ (* 1024.0 1024.0)))
-      (-> (get-in configuration [:output :css])
-          (file-size)
-          (/ (* 1024.0 1024.0)))))))
+     (let [input-kb  (/ (::input-size db) 1024.0)
+           output-kb (-> (get-in configuration [:output :css])
+                         (file-size)
+                         (/ 1024.0))]
+       (str
+        (if (> input-kb 1024.0)
+          (format "%.03f MB" (/ input-kb 1024.0))
+          (format "%.03f K" input-kb))
+        " -> "
+        (if (> output-kb 1024.0)
+          (format "%.03f MB" (/ output-kb 1024.0))
+          (format "%.03f KB" output-kb)))))))
+
+(defn import-stylesheets
+  "compcss.core-test/test-import-css"
+  [files]
+  (mapcat (comp clj-ph-css.core/string->schema slurp) files))
 
 (defn before-middleware
   "compcss.core-test/test-before-middleware"
@@ -89,12 +87,12 @@
     (import-message configuration db)
     (let [start-time  (System/currentTimeMillis)
           css-files   (get-css-files configuration)
-          stylesheets (import-stylesheets (::input-stylesheets db) css-files)]
+          stylesheets (import-stylesheets css-files)]
       (->>
        {::start-time         start-time
         ::input-size         (apply + (map file-size css-files))
         ::input-stylesheets  stylesheets
-        ::output-stylesheets (mapcat val stylesheets)}
+        ::output-stylesheets stylesheets}
        (merge db)
        (handler configuration)))))
 
