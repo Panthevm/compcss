@@ -3,8 +3,10 @@ A tool for transforming CSS with Clojure.
 
 
 ** Middleware
-+ [[https://github.com/Panthevm/compcss-clean][compcss-clean]] - Removing unused CSS from stylesheets.(todo)
-
++ [[https://github.com/Panthevm/compcss-unused-remove][compcss-unused-remove]]
++ [[https://github.com/Panthevm/compcss-visually-impaired][compcss-visually-impaired]]
++ [[https://github.com/Panthevm/compcss-compression][compcss-compression]]
++ [[https://github.com/rnikolae/compcss-elochka-gori][compcss-elochka-gori]]
 
 ** Usage
 Add a dependency.
