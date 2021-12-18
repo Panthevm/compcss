@@ -9,6 +9,14 @@
 (require 'io.aviso.ansi)
 (require 'hawk.core)
 
+(comment
+  (time
+   (do
+     (->>
+      (slurp "/home/panthevm/xmas2021/demo/compcss/resources/public/css/src/tailwind.min.css")
+      (clj-ph-css.core/string->schema))
+     nil)))
+
 (defn css-file?
   "compcss.core-test/test-css-file?"
   [^java.io.File file]
@@ -42,17 +50,15 @@
    message-separator
    "CompCSS"
    message-separator
-   (get-in configuration [:output :css])
+   "Import"
    message-separator
-   "Import"))
+   (get-in configuration [:output :css])))
 
 (defn export-message
   [configuration db]
   (println
    message-separator
    "CompCSS"
-   message-separator
-   (get-in configuration [:output :css])
    message-separator
    "Export"
    message-separator
@@ -73,7 +79,10 @@
         " -> "
         (if (> output-kb 1024.0)
           (format "%.03f MB" (/ output-kb 1024.0))
-          (format "%.03f KB" output-kb)))))))
+          (format "%.03f KB" output-kb)))))
+   message-separator
+   (get-in configuration [:output :css])
+   ))
 
 (defn import-stylesheets
   "compcss.core-test/test-import-css"
